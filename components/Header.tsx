@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Avatar from "@/components/Avatar";
 import SearchBar from "@/components/SearchBar";
+import GPTSummerizingBox from "@/components/GPTSummarizingBox";
 
 const Header = () => {
   return (
@@ -19,12 +20,15 @@ const Header = () => {
           className="w-44 md:w-56 pb-10 md:pb-0 object-contain"
         />
 
-        <div className="flex items-center flex-1 justify-end space-x-5">
-          {/* Search Bar*/}
+        {/* Search Bar and Avatar*/}
+        <div className="flex items-center flex-1 w-full justify-end space-x-5">
           <SearchBar />
-          {/* Avatar */}
           <Avatar />
         </div>
+      </div>
+
+      <div className="flex items-center justify-center py-2 md:py-5">
+        <GPTSummerizingBox />
       </div>
     </header>
   );
