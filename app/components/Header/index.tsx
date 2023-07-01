@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Avatar from "@/components/Avatar";
-import SearchBar from "@/components/SearchBar";
-import GPTSummerizingBox from "@/components/GPTSummarizingBox";
+import Avatar from "@/app/components/Header/Avatar";
+import SearchBar from "@/app/components/Header/SearchBar";
+import GPTSummerizingBox from "@/app/components/Header/GPTSummarizingBox";
 
 const Header = () => {
   return (
