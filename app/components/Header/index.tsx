@@ -20,6 +20,7 @@ const Header = () => {
         <Image
           src="/images/trello-logo.svg"
           alt="trello-logo"
+          priority={true}
           width={200}
           height={100}
           className="w-44 md:w-56 pb-10 md:pb-0 object-contain"
