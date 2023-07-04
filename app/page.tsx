@@ -1,4 +1,5 @@
 import Header from "@/app/components/Header";
+import Board from "@/app//components/Board";
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
 
       {/* Board */}
       <h1>Home</h1>
+      <Board />
     </main>
   )
 }
