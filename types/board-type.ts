@@ -1,3 +1,5 @@
+import { Models } from "appwrite";
+
 export interface Board {
   columns: Map<StatusType, BoardColumn>;
 }
@@ -10,13 +12,13 @@ export interface BoardColumn {
   };
 }
 
-export interface Todo {
+export interface Todo extends Models.Document {
   readonly $id: string;
   title: string;
   status: StatusType;
   image?: AppwriteImage;
   readonly $createdAt: string;
-  updatedAt?: string;
+  readonly $updatedAt: string;
 }
 
 export type StatusType = "todo" | "in-progress" | "done";
