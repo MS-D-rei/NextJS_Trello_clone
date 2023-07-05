@@ -1,6 +1,9 @@
 import { databases } from "@/appwrite";
+import { Board, BoardColumn, StatusType } from "@/types/board-type";
 
 export const getTodosGroupedByStatus = async () => {
+  // fetch todos from Appwrite database
+
   const response = await databases.listDocuments(
     process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
     process.env.NEXT_PUBLIC_APPWRITE_TODOS_COLLECTION_ID
@@ -23,6 +26,33 @@ export const getTodosGroupedByStatus = async () => {
   // status: "todo"
   // }
   //
-  return response;
-};
 
+  // transform response.documents to Board data type
+
+  const todos = response.documents;
+
+  let initialBoard: Board = {
+    columns: new Map<StatusType, BoardColumn>([
+      ["todo", { id: "todo", todos: { byId: {}, allIds: [] } }],
+      ["in-progress", { id: "in-progress", todos: { byId: {}, allIds: [] } }],
+      ["done", { id: "done", todos: { byId: {}, allIds: [] } }],
+    ]),
+  };
+
+  const board = todos.reduce((board, todo) => {
+    const column = board.columns.get(todo.status);
+    if (!column) {
+      return board;
+    }
+
+    column.todos.byId[todo.$id] = {
+      ...todo,
+      ...(todo.image && { image: JSON.parse(todo.image) }),
+    };
+    column.todos.allIds.push(todo.$id);
+
+    return board;
+  }, initialBoard);
+
+  return board;
+};
