@@ -6,10 +6,12 @@ export interface Board {
 
 export interface BoardColumn {
   id: StatusType;
-  todos: {
-    byId: Record<string, Todo>;
-    allIds: string[];
-  };
+  todos: Todos;
+}
+
+export interface Todos {
+  byId: Record<string, Todo>;
+  allIds: string[];
 }
 
 export interface Todo extends Models.Document {
