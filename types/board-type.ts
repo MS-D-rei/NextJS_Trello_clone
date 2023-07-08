@@ -1,15 +1,16 @@
 import { Models } from "appwrite";
 
-export interface Board {
-  columns: Map<StatusType, BoardColumn>;
+export interface ColumnData {
+  byId: Record<StatusType, Column>;
+  allIds: string[];
 }
 
-export interface BoardColumn {
+export interface Column {
   id: StatusType;
-  todos: Todos;
+  todoIds: string[];
 }
 
-export interface Todos {
+export interface TodoData {
   byId: Record<string, Todo>;
   allIds: string[];
 }
