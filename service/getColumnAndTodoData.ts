@@ -1,7 +1,7 @@
 import { databases } from "@/appwrite";
-import { Board, BoardColumn, StatusType } from "@/types/board-type";
+import { ColumnData, StatusType, TodoData } from "@/types/board-type";
 
-export const getTodosGroupedByStatus = async () => {
+export const getColumnAndTodoData = async () => {
   // fetch todos from Appwrite database
 
   const response = await databases.listDocuments(
@@ -31,28 +31,40 @@ export const getTodosGroupedByStatus = async () => {
 
   const todos = response.documents;
 
-  let initialBoard: Board = {
-    columns: new Map<StatusType, BoardColumn>([
-      ["todo", { id: "todo", todos: { byId: {}, allIds: [] } }],
-      ["in-progress", { id: "in-progress", todos: { byId: {}, allIds: [] } }],
-      ["done", { id: "done", todos: { byId: {}, allIds: [] } }],
-    ]),
+  let initialColumnData: ColumnData = {
+    byId: {
+      todo: { id: "todo", todoIds: [] },
+      "in-progress": { id: "in-progress", todoIds: [] },
+      done: { id: "done", todoIds: [] },
+    },
+    allIds: ["todo", "in-progress", "done"],
   };
 
-  const board = todos.reduce((board, todo) => {
-    const column = board.columns.get(todo.status);
-    if (!column) {
-      return board;
-    }
+  let initialTodoData: TodoData = {
+    byId: {},
+    allIds: [],
+  };
 
-    column.todos.byId[todo.$id] = {
+  const columnData = todos.reduce((acc, todo) => {
+    const todoStatus = todo.status as StatusType;
+    acc.byId[todoStatus].todoIds.push(todo.$id);
+
+    return acc;
+  }, initialColumnData);
+
+  const todoData = todos.reduce((acc, todo) => {
+    acc.byId[todo.$id] = {
       ...todo,
       ...(todo.image && { image: JSON.parse(todo.image) }),
     };
-    column.todos.allIds.push(todo.$id);
 
-    return board;
-  }, initialBoard);
+    acc.allIds.push(todo.$id);
 
-  return board;
+    return acc;
+  }, initialTodoData);
+
+  return {
+    columnData,
+    todoData,
+  };
 };
