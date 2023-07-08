@@ -1,8 +1,8 @@
 import { Models } from "appwrite";
 
-export interface ColumnData {
+export interface ColumnsData {
   byId: Record<StatusType, Column>;
-  allIds: string[];
+  allIds: StatusType[];
 }
 
 export interface Column {
@@ -10,7 +10,7 @@ export interface Column {
   todoIds: string[];
 }
 
-export interface TodoData {
+export interface TodosData {
   byId: Record<string, Todo>;
   allIds: string[];
 }
