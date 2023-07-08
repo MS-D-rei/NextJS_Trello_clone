@@ -1,17 +1,17 @@
 import { create } from "zustand";
-import { ColumnData, TodoData } from "@/types/board-type";
+import { ColumnsData, StatusType, TodosData } from "@/types/board-type";
 import { getColumnAndTodoData } from "@/service/getColumnAndTodoData";
 import { arrayMove } from "@dnd-kit/sortable";
 
 interface BoardState {
-  columns: ColumnData;
-  todos: TodoData;
+  columnsData: ColumnsData;
+  todosData: TodosData;
   fetchBoard: () => void;
-  changeColumnOrder: (activeId: string, overId: string) => void;
+  changeColumnOrder: (activeId: StatusType, overId: StatusType) => void;
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
-  columns: {
+  columnsData: {
     byId: {
       todo: { id: "todo", todoIds: [] },
       "in-progress": { id: "in-progress", todoIds: [] },
@@ -19,31 +19,31 @@ export const useBoardStore = create<BoardState>((set) => ({
     },
     allIds: [],
   },
-  todos: {
+  todosData: {
     byId: {},
     allIds: [],
   },
   fetchBoard: async () => {
-    const { columnData, todoData } = await getColumnAndTodoData();
+    const { columnsData, todosData } = await getColumnAndTodoData();
 
-    set({ columns: columnData, todos: todoData });
+    set({ columnsData, todosData });
   },
   changeColumnOrder: (activeId, overId) => {
     if (activeId === overId) return;
 
     if (activeId !== overId) {
       set((state) => {
-        const activeIndex = state.columns.allIds.indexOf(activeId);
-        const overIndex = state.columns.allIds.indexOf(overId);
+        const activeIndex = state.columnsData.allIds.indexOf(activeId);
+        const overIndex = state.columnsData.allIds.indexOf(overId);
         const newColumnOrder = arrayMove(
-          state.columns.allIds,
+          state.columnsData.allIds,
           activeIndex,
           overIndex
         );
 
         return {
-          columns: {
-            ...state.columns,
+          columnsData: {
+            ...state.columnsData,
             allIds: newColumnOrder,
           },
         };

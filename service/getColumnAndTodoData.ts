@@ -1,5 +1,5 @@
 import { databases } from "@/appwrite";
-import { ColumnData, StatusType, TodoData } from "@/types/board-type";
+import { ColumnsData, StatusType, TodosData } from "@/types/board-type";
 
 export const getColumnAndTodoData = async () => {
   // fetch todos from Appwrite database
@@ -31,7 +31,7 @@ export const getColumnAndTodoData = async () => {
 
   const todos = response.documents;
 
-  let initialColumnData: ColumnData = {
+  let initialColumnData: ColumnsData = {
     byId: {
       todo: { id: "todo", todoIds: [] },
       "in-progress": { id: "in-progress", todoIds: [] },
@@ -40,19 +40,19 @@ export const getColumnAndTodoData = async () => {
     allIds: ["todo", "in-progress", "done"],
   };
 
-  let initialTodoData: TodoData = {
+  let initialTodoData: TodosData = {
     byId: {},
     allIds: [],
   };
 
-  const columnData = todos.reduce((acc, todo) => {
+  const columnsData = todos.reduce((acc, todo) => {
     const todoStatus = todo.status as StatusType;
     acc.byId[todoStatus].todoIds.push(todo.$id);
 
     return acc;
   }, initialColumnData);
 
-  const todoData = todos.reduce((acc, todo) => {
+  const todosData = todos.reduce((acc, todo) => {
     acc.byId[todo.$id] = {
       ...todo,
       ...(todo.image && { image: JSON.parse(todo.image) }),
@@ -64,7 +64,7 @@ export const getColumnAndTodoData = async () => {
   }, initialTodoData);
 
   return {
-    columnData,
-    todoData,
+    columnsData,
+    todosData,
   };
 };
