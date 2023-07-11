@@ -2,12 +2,19 @@ import { create } from "zustand";
 import { ColumnsData, StatusType, TodosData } from "@/types/board-type";
 import { getColumnAndTodoData } from "@/service/getColumnAndTodoData";
 import { arrayMove } from "@dnd-kit/sortable";
+import { UniqueIdentifier } from "@dnd-kit/core";
 
 interface BoardState {
   columnsData: ColumnsData;
   todosData: TodosData;
   fetchBoard: () => void;
   changeColumnOrder: (activeId: StatusType, overId: StatusType) => void;
+  moveTodoInSameColumn: (activeId: string, overId: string) => void;
+  moveTodoToAnotherColumn: (
+    activeTodoId: UniqueIdentifier,
+    overTodoId: UniqueIdentifier,
+    isBelowTodoCard: boolean | null,
+  ) => void;
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
@@ -29,25 +36,102 @@ export const useBoardStore = create<BoardState>((set) => ({
     set({ columnsData, todosData });
   },
   changeColumnOrder: (activeId, overId) => {
-    if (activeId === overId) return;
+    set((state) => {
+      const activeIndex = state.columnsData.allIds.indexOf(activeId);
+      const overIndex = state.columnsData.allIds.indexOf(overId);
+      const newColumnOrder = arrayMove(
+        state.columnsData.allIds,
+        activeIndex,
+        overIndex
+      );
 
-    if (activeId !== overId) {
-      set((state) => {
-        const activeIndex = state.columnsData.allIds.indexOf(activeId);
-        const overIndex = state.columnsData.allIds.indexOf(overId);
-        const newColumnOrder = arrayMove(
-          state.columnsData.allIds,
-          activeIndex,
-          overIndex
-        );
+      return {
+        columnsData: {
+          ...state.columnsData,
+          allIds: newColumnOrder,
+        },
+      };
+    });
+  },
+  moveTodoInSameColumn: (activeId, overId) => {
+    set((state) => {
+      const activeTodoStatus = state.todosData.byId[activeId].status;
+      const activeColumn = state.columnsData.byId[activeTodoStatus];
 
-        return {
-          columnsData: {
-            ...state.columnsData,
-            allIds: newColumnOrder,
+      const activeTodoIndex = activeColumn.todoIds.indexOf(activeId);
+      const overTodoIndex = activeColumn.todoIds.indexOf(overId);
+
+      const newTodosOrder = arrayMove(
+        activeColumn.todoIds,
+        activeTodoIndex,
+        overTodoIndex
+      );
+
+      return {
+        columnsData: {
+          ...state.columnsData,
+          byId: {
+            ...state.columnsData.byId,
+            [activeColumn.id]: {
+              ...activeColumn,
+              todoIds: newTodosOrder,
+            },
           },
-        };
-      });
-    }
+        },
+      };
+    });
+  },
+  moveTodoToAnotherColumn: (activeTodoId, overTodoId, isBelowTodoCard) => {
+    set((state) => {
+      const { columnsData, todosData } = state;
+
+      // remove active todo id from active column's todoIds
+
+      const activeTodoStatus = todosData.byId[activeTodoId].status;
+      const activeColumn = columnsData.byId[activeTodoStatus];
+      const newActiveTodosOrder = activeColumn.todoIds.filter(
+        (todoId) => todoId !== activeTodoId
+      );
+
+      // add active todo id to over column's todoIds
+
+      // calculate overTodoIndex
+      const overTodoStatus = todosData.byId[overTodoId].status;
+      const overTodoColumn = columnsData.byId[overTodoStatus];
+      const overTodoIndex = overTodoColumn.todoIds.indexOf(overTodoId);
+
+      // calculate landingIndex
+      let landingIndex = 0;
+      // if isBelowTodoCard is true, then landingIndex should be overTodoIndex + 1
+      const modifier = isBelowTodoCard ? 1 : 0;
+      landingIndex =
+        overTodoIndex >= 0
+          ? overTodoIndex + modifier
+          : overTodoColumn.todoIds.length + 1;
+
+      // add activeTodoId to overTodoColumn's todoIds
+      const newOverTodosOrder = [
+        ...overTodoColumn.todoIds.slice(0, landingIndex),
+        activeTodoId,
+        ...overTodoColumn.todoIds.slice(landingIndex),
+      ];
+
+      return {
+        columnsData: {
+          ...columnsData,
+          byId: {
+            ...columnsData.byId,
+            [activeColumn.id]: {
+              ...activeColumn,
+              todoIds: newActiveTodosOrder,
+            },
+            [overTodoColumn.id]: {
+              ...overTodoColumn,
+              todoIds: newOverTodosOrder,
+            },
+          },
+        },
+      };
+    });
   },
 }));
