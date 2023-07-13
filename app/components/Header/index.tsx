@@ -12,7 +12,7 @@ const Header = () => {
 
         <div
           className="absolute top-0 left-0
-          w-full h-96 bg-gradient-to-b from-pink-400 via-purple-400 to-blue-400
+          w-full h-full bg-gradient-to-b from-pink-400/70 via-purple-400/70 to-blue-400/70
           rounded-b-2xl filter blur-3xl opacity-50 -z-50"
         />
 

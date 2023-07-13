@@ -186,7 +186,7 @@ const Board = () => {
       onDragEnd={handleDragEnd}
     >
       <SortableContext id="board" items={columnsData.allIds}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-7xl mx-2">
           {columnsData.allIds.map((status) => (
             <SortableColumn
               key={status}

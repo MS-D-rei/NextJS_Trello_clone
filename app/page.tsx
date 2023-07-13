@@ -8,7 +8,6 @@ export default function Home() {
       <Header />
 
       {/* Board */}
-      <h1>Home</h1>
       <Board />
     </main>
   )

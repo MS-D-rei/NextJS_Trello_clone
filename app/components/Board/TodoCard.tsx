@@ -18,15 +18,15 @@ const TodoCard: React.FC<TodoCardProps> = ({ id, todo }) => {
   }
 
   return (
-    <div
+    <li
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className="p-2 rounded-md shadow-sm gap-4"
+      className="rounded-md shadow-sm bg-white/50 p-2 px-4"
     >
       {todo.title}
-    </div>
+    </li>
   )
 };
 

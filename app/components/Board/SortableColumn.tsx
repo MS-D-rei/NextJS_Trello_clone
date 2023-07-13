@@ -36,22 +36,24 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
       style={style}
       {...attributes}
       {...listeners}
-      className="p-2 rounded-2xl shadow-sm bg-white/50"
+      className="p-2 rounded-2xl shadow-sm bg-gray-100/50"
     >
-      <h2 className="flex items-center justify-between p-2">
+      <h2 className="flex items-center justify-between bg-white/80 rounded-2xl p-2 px-4 mb-4">
         {idToColumnText[id]}
         <span className="text-sm text-gray-500 rounded-full bg-gray-300 px-4 py-2">
           {column.todoIds.length}
         </span>
       </h2>
 
-      <div>
+      <ul
+        className="grid gap-4 list-none"
+      >
         <SortableContext id="todos" items={column.todoIds}>
           {column.todoIds.map((todoId) => (
             <TodoCard key={todoId} id={todoId} todo={todos.byId[todoId]} />
           ))}
         </SortableContext>
-      </div>
+      </ul>
     </div>
   );
 };
