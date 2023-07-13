@@ -14,6 +14,10 @@ interface BoardState {
     overTodoId: string,
     isBelowTodoCard: boolean | null
   ) => void;
+  moveTodoToEmptyColumn: (
+    activeTodoIds: string,
+    overColumnId: StatusType
+  ) => void;
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
@@ -139,6 +143,48 @@ export const useBoardStore = create<BoardState>((set) => ({
             [activeTodoId]: {
               ...todosData.byId[activeTodoId],
               status: overTodoStatus,
+            },
+          },
+        },
+      };
+    });
+  },
+  moveTodoToEmptyColumn: (activeTodoId, overColumnId) => {
+    set((state) => {
+      // this function do 3 things.
+      // 1. remove active todo id from active column's activeTodoIds
+      // 2. add active todo id to over column's activeTodoIds
+      // 3. change active todo's status to over column's status
+
+      const activeTodoStatus = state.todosData.byId[activeTodoId].status;
+      const activeColumn = state.columnsData.byId[activeTodoStatus];
+      const newActiveTodosOrder = activeColumn.todoIds.filter(
+        (todoId) => todoId !== activeTodoId
+      );
+      const overColumn = state.columnsData.byId[overColumnId];
+
+      return {
+        columnsData: {
+          ...state.columnsData,
+          byId: {
+            ...state.columnsData.byId,
+            [activeColumn.id]: {
+              ...activeColumn,
+              todoIds: newActiveTodosOrder,
+            },
+            [overColumn.id]: {
+              ...overColumn,
+              todoIds: [activeTodoId],
+            },
+          },
+        },
+        todosData: {
+          ...state.todosData,
+          byId: {
+            ...state.todosData.byId,
+            [activeTodoId]: {
+              ...state.todosData.byId[activeTodoId],
+              status: overColumnId,
             },
           },
         },
