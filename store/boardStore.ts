@@ -1,8 +1,7 @@
 import { create } from "zustand";
 import { ColumnsData, StatusType, TodosData } from "@/types/board-type";
-import { getColumnAndTodoData } from "@/service/getColumnAndTodoData";
 import { arrayMove } from "@dnd-kit/sortable";
-import { UniqueIdentifier } from "@dnd-kit/core";
+import { getColumnAndTodoData } from "@/service/getColumnAndTodoData";
 
 interface BoardState {
   columnsData: ColumnsData;
@@ -11,9 +10,9 @@ interface BoardState {
   changeColumnOrder: (activeId: StatusType, overId: StatusType) => void;
   moveTodoInSameColumn: (activeId: string, overId: string) => void;
   moveTodoToAnotherColumn: (
-    activeTodoId: UniqueIdentifier,
-    overTodoId: UniqueIdentifier,
-    isBelowTodoCard: boolean | null,
+    activeTodoId: string,
+    overTodoId: string,
+    isBelowTodoCard: boolean | null
   ) => void;
 }
 
@@ -97,23 +96,22 @@ export const useBoardStore = create<BoardState>((set) => ({
 
       // calculate overTodoIndex
       const overTodoStatus = todosData.byId[overTodoId].status;
-      const overTodoColumn = columnsData.byId[overTodoStatus];
-      const overTodoIndex = overTodoColumn.todoIds.indexOf(overTodoId);
+      const overColumn = columnsData.byId[overTodoStatus];
+      const overTodoIndex = overColumn.todoIds.indexOf(overTodoId);
 
       // calculate landingIndex
       let landingIndex = 0;
-      // if isBelowTodoCard is true, then landingIndex should be overTodoIndex + 1
       const modifier = isBelowTodoCard ? 1 : 0;
       landingIndex =
         overTodoIndex >= 0
           ? overTodoIndex + modifier
-          : overTodoColumn.todoIds.length + 1;
+          : overColumn.todoIds.length + 1;
 
       // add activeTodoId to overTodoColumn's todoIds
       const newOverTodosOrder = [
-        ...overTodoColumn.todoIds.slice(0, landingIndex),
+        ...overColumn.todoIds.slice(0, landingIndex),
         activeTodoId,
-        ...overTodoColumn.todoIds.slice(landingIndex),
+        ...overColumn.todoIds.slice(landingIndex),
       ];
 
       return {
@@ -125,8 +123,8 @@ export const useBoardStore = create<BoardState>((set) => ({
               ...activeColumn,
               todoIds: newActiveTodosOrder,
             },
-            [overTodoColumn.id]: {
-              ...overTodoColumn,
+            [overColumn.id]: {
+              ...overColumn,
               todoIds: newOverTodosOrder,
             },
           },
