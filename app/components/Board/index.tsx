@@ -11,6 +11,7 @@ import {
   KeyboardSensor,
   PointerSensor,
   UniqueIdentifier,
+  closestCorners,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -41,7 +42,9 @@ const Board = () => {
     useSensor(PointerSensor)
   );
 
-  // const collisionDetection: CollisionDetection = useCallback((args) => { }, []);
+  const collisionDetection: CollisionDetection = (args) => {
+    return closestCorners(args);
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -148,6 +151,7 @@ const Board = () => {
   return (
     <DndContext
       sensors={sensors}
+      collisionDetection={collisionDetection}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
