@@ -108,11 +108,14 @@ export const useBoardStore = create<BoardState>((set) => ({
           : overColumn.todoIds.length + 1;
 
       // add activeTodoId to overTodoColumn's todoIds
+
       const newOverTodosOrder = [
         ...overColumn.todoIds.slice(0, landingIndex),
         activeTodoId,
         ...overColumn.todoIds.slice(landingIndex),
       ];
+
+      // change activeTodo's status to overTodo's status
 
       return {
         columnsData: {
@@ -126,6 +129,16 @@ export const useBoardStore = create<BoardState>((set) => ({
             [overColumn.id]: {
               ...overColumn,
               todoIds: newOverTodosOrder,
+            },
+          },
+        },
+        todosData: {
+          ...todosData,
+          byId: {
+            ...todosData.byId,
+            [activeTodoId]: {
+              ...todosData.byId[activeTodoId],
+              status: overTodoStatus,
             },
           },
         },
