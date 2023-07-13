@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useBoardStore } from "@/store/boardStore";
 import {
+  CollisionDetection,
   DndContext,
   DragEndEvent,
   DragOverEvent,
+  DragStartEvent,
   KeyboardSensor,
   PointerSensor,
+  UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -16,8 +19,15 @@ import SortableColumn from "@/app/components/Board/SortableColumn";
 import { StatusType } from "@/types/board-type";
 
 const Board = () => {
-  const { columnsData, todosData, fetchBoard, changeColumnOrder, moveTodoToAnotherColumn } =
-    useBoardStore();
+  const {
+    columnsData,
+    todosData,
+    fetchBoard,
+    changeColumnOrder,
+    moveTodoInSameColumn,
+    moveTodoToAnotherColumn,
+  } = useBoardStore();
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
   useEffect(() => {
     fetchBoard();
@@ -31,76 +41,114 @@ const Board = () => {
     useSensor(PointerSensor)
   );
 
+  // const collisionDetection: CollisionDetection = useCallback((args) => { }, []);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    setActiveId(active.id);
+  };
+
   const handleDragOver = (event: DragOverEvent) => {
+    console.log("DragOverEvent");
     console.log(event);
 
     const { active, over } = event;
 
-    const activeId = active.id;
-    const overId = over?.id;
-    const isActiveAndOverSame = activeId === overId;
-    const isColumnActive = ["todo", "in-progress", "done"].includes(
-      activeId as StatusType
-    );
+    // do nothing pattern
+    // if over is null, do nothing.
+    if (over === null || over.id === undefined) return;
 
-    if (
-      over === null ||
-      overId === undefined ||
-      isActiveAndOverSame ||
-      isColumnActive
-    ) {
-      return;
-    }
+    // if active.id and over.id are the same, do nothing.
+    if (active.id === over.id) return;
 
-    const activeTodo = todosData.byId[activeId];
-    const overTodo = todosData.byId[overId];
+    // handleDragOver should work in only 1 pattern.
+    // 1. active.id and over.id both are todos and active move to different column.
+
+    // other cases, do nothing.
+
+    const isActiveOrOverColumn =
+      ["todo", "in-progress", "done"].includes(active.id as StatusType) ||
+      ["todo", "in-progress", "done"].includes(over.id as StatusType);
+
+    if (isActiveOrOverColumn) return;
+
+    const activeTodo = todosData.byId[active.id];
+    const overTodo = todosData.byId[over.id];
+
+    // if active and over are in the same column, do nothing.
 
     const activeColumnId = columnsData.byId[activeTodo.status].id;
     const overColumnId = columnsData.byId[overTodo.status].id;
-    const isActiveAndOverTodoInSameColumn = activeColumnId === overColumnId;
 
+    const isActiveAndOverTodoInSameColumn = activeColumnId === overColumnId;
     if (isActiveAndOverTodoInSameColumn) {
       return;
     }
+
+    // work case: active and over are todos and active move to difference column.
 
     const isBelowOverTodoCard =
       active.rect.current.translated &&
       active.rect.current.translated.top > over.rect.top + over.rect.height;
 
-    moveTodoToAnotherColumn(activeId, overId, isBelowOverTodoCard);
+    moveTodoToAnotherColumn(
+      active.id as string,
+      over.id as string,
+      isBelowOverTodoCard
+    );
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
+    console.log("DragEndEvent");
     console.log(event);
 
     const { active, over } = event;
 
-    // If the active item was dropped outside of a container, do nothing
-    if (over === null) return;
+    if (over === null || over.id === undefined) return;
 
-    // If the active item was dropped in the same container, do nothing
     if (active.id === over.id) return;
 
-    // If the active item was one of the columns, change order
+    // handleDragEnd should work in only 2 patterns.
+    // 1. active.id and over.id both are columns.
+    // 2. active.id and over.id both are todos and they are in same columns.
 
-    const isColumnActive = ["todo", "in-progress", "done"].includes(
-      active.id as StatusType
+    const isActiveColumn = ["todo", "in-progress", "done"].includes(
+      activeId as StatusType
+    );
+    const isOverColumn = ["todo", "in-progress", "done"].includes(
+      over.id as StatusType
     );
 
-    if (isColumnActive) {
-      const activeId = active.id as StatusType;
-      const overId = over.id as StatusType;
+    // if other cases, do nothing.
 
-      changeColumnOrder(activeId, overId);
+    if (isActiveColumn && !isOverColumn) return;
+    if (!isActiveColumn && isOverColumn) return;
+
+    // case 1. active.id and over.id both are columns.
+
+    if (isActiveColumn && isOverColumn) {
+      changeColumnOrder(active.id as StatusType, over.id as StatusType);
       return;
     }
 
-    
+    // case 2. active.id and over.id both are todos and they are in same columns.
+
+    const activeTodoStatus = todosData.byId[active.id].status;
+    const overTodoStatus = todosData.byId[over.id].status;
+
+    const areBothActiveAndOverTodoInSameColumn =
+      activeTodoStatus === overTodoStatus;
+
+    if (areBothActiveAndOverTodoInSameColumn) {
+      moveTodoInSameColumn(active.id as string, over.id as string);
+      return;
+    }
   };
 
   return (
     <DndContext
       sensors={sensors}
+      onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
