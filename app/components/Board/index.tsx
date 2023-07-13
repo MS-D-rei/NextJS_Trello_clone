@@ -27,6 +27,7 @@ const Board = () => {
     changeColumnOrder,
     moveTodoInSameColumn,
     moveTodoToAnotherColumn,
+    moveTodoToEmptyColumn,
   } = useBoardStore();
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
@@ -64,41 +65,69 @@ const Board = () => {
     // if active.id and over.id are the same, do nothing.
     if (active.id === over.id) return;
 
-    // handleDragOver should work in only 1 pattern.
-    // 1. active.id and over.id both are todos and active move to different column.
+    // handleDragOver should work in only 2 pattern.
+    // 1. active.id and over.id both are todo and active moves to different column.
+    // 2. active.id is todo and over.id is column
+    // and active moves to diff col
+    // and the column todoIds length is 0.
 
     // other cases, do nothing.
 
-    const isActiveOrOverColumn =
-      ["todo", "in-progress", "done"].includes(active.id as StatusType) ||
-      ["todo", "in-progress", "done"].includes(over.id as StatusType);
+    const isActiveColumn = ["todo", "in-progress", "done"].includes(
+      active.id as StatusType
+    );
 
-    if (isActiveOrOverColumn) return;
+    if (isActiveColumn) return;
 
-    const activeTodo = todosData.byId[active.id];
-    const overTodo = todosData.byId[over.id];
+    const isOverColumn = ["todo", "in-progress", "done"].includes(
+      over.id as StatusType
+    );
 
-    // if active and over are in the same column, do nothing.
+    // case1: active and over are todos and active moves to difference column.
 
-    const activeColumnId = columnsData.byId[activeTodo.status].id;
-    const overColumnId = columnsData.byId[overTodo.status].id;
+    if (!isOverColumn) {
+      const activeTodo = todosData.byId[active.id];
+      const overTodo = todosData.byId[over.id];
 
-    const isActiveAndOverTodoInSameColumn = activeColumnId === overColumnId;
-    if (isActiveAndOverTodoInSameColumn) {
+      // if active and over are in the same column, do nothing.
+
+      const activeColumnId = columnsData.byId[activeTodo.status].id;
+      const overColumnId = columnsData.byId[overTodo.status].id;
+
+      const isActiveAndOverTodoInSameColumn = activeColumnId === overColumnId;
+      if (isActiveAndOverTodoInSameColumn) {
+        return;
+      }
+
+      const isBelowOverTodoCard =
+        active.rect.current.translated &&
+        active.rect.current.translated.top > over.rect.top + over.rect.height;
+
+      moveTodoToAnotherColumn(
+        active.id as string,
+        over.id as string,
+        isBelowOverTodoCard
+      );
+
       return;
     }
 
-    // work case: active and over are todos and active move to difference column.
+    // case2: active is todo and over is column and the column todoIds length is 0.
 
-    const isBelowOverTodoCard =
-      active.rect.current.translated &&
-      active.rect.current.translated.top > over.rect.top + over.rect.height;
+    const activeTodo = todosData.byId[active.id];
+    const activeTodoStatus = activeTodo.status;
+    const activeTodoColumnId = columnsData.byId[activeTodoStatus].id;
+    const overColumnId = columnsData.byId[over.id as StatusType].id;
+    const areActiveAndOverColumnSame = activeTodoColumnId === overColumnId;
 
-    moveTodoToAnotherColumn(
-      active.id as string,
-      over.id as string,
-      isBelowOverTodoCard
-    );
+    if (areActiveAndOverColumnSame) return;
+
+    const isOverColumnTodoIdsLengthZero =
+      columnsData.byId[over.id as StatusType].todoIds.length === 0;
+
+    if (!isOverColumnTodoIdsLengthZero) return;
+
+    moveTodoToEmptyColumn(active.id as string, over.id as StatusType);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
