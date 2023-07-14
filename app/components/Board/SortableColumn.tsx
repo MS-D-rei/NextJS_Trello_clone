@@ -55,7 +55,7 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
         </SortableContext>
         <li className="flex justify-end p-2 px-4 bg-white/50 rounded-md hover:bg-green-200">
           <button>
-            <PlusCircleIcon className="h-8 w-8 text-green-500" />
+            <PlusCircleIcon className="h-6 w-6 text-green-500" />
           </button>
         </li>
       </ul>
