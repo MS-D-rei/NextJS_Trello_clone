@@ -23,6 +23,7 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    touchAction: "none",
   };
 
   const idToColumnText: { [key in StatusType]: string } = {
