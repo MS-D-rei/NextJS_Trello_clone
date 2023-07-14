@@ -47,6 +47,10 @@ const Board = () => {
     return closestCorners(args);
   };
 
+  const handleSave = () => {
+    // update appwrite DB
+  };
+
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     setActiveId(active.id);
@@ -178,26 +182,42 @@ const Board = () => {
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={collisionDetection}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext id="board" items={columnsData.allIds}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-7xl mx-2">
-          {columnsData.allIds.map((status) => (
-            <SortableColumn
-              key={status}
-              id={status}
-              column={columnsData.byId[status]}
-              todos={todosData}
-            />
-          ))}
-        </div>
-      </SortableContext>
-    </DndContext>
+    <>
+      <div className="flex justify-end space-x-1 mr-4 mb-2">
+        <button
+          className="rounded-md text-gray-500 bg-white/50 p-2 mr-2"
+          onClick={() => fetchBoard()}
+        >
+          Reset
+        </button>
+        <button
+          className="rounded-md text-white bg-sky-500 p-2 mr-2"
+          onClick={handleSave}
+        >
+          Save
+        </button>
+      </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={collisionDetection}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext id="board" items={columnsData.allIds}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-7xl mx-auto">
+            {columnsData.allIds.map((status) => (
+              <SortableColumn
+                key={status}
+                id={status}
+                column={columnsData.byId[status]}
+                todos={todosData}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+    </>
   );
 };
 
