@@ -1,14 +1,19 @@
 import { create } from "zustand";
-import { ColumnsData, StatusType, TodosData } from "@/types/board-type";
+import { ColumnsData, StatusType, Todo, TodosData } from "@/types/board-type";
 import { arrayMove } from "@dnd-kit/sortable";
 import { getColumnAndTodoData } from "@/service/getColumnAndTodoData";
+import { databases } from "@/appwrite";
 
 interface BoardState {
   columnsData: ColumnsData;
   todosData: TodosData;
   fetchBoard: () => void;
   changeColumnOrder: (activeId: StatusType, overId: StatusType) => void;
-  moveTodoInSameColumn: (activeId: string, overId: string) => void;
+  moveTodoInSameColumn: (
+    activeTodoId: string,
+    overTodoId: string,
+    status: StatusType
+  ) => void;
   moveTodoToAnotherColumn: (
     activeTodoId: string,
     overTodoId: string,
@@ -18,6 +23,7 @@ interface BoardState {
     activeTodoIds: string,
     overColumnId: StatusType
   ) => void;
+  sendColumnsDataToServer: (todo: Todo, status: StatusType) => void;
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
@@ -56,16 +62,15 @@ export const useBoardStore = create<BoardState>((set) => ({
       };
     });
   },
-  moveTodoInSameColumn: (activeId, overId) => {
+  moveTodoInSameColumn: (activeTodoId, overTodoId, status) => {
     set((state) => {
-      const activeTodoStatus = state.todosData.byId[activeId].status;
-      const activeColumn = state.columnsData.byId[activeTodoStatus];
+      const column = state.columnsData.byId[status];
 
-      const activeTodoIndex = activeColumn.todoIds.indexOf(activeId);
-      const overTodoIndex = activeColumn.todoIds.indexOf(overId);
+      const activeTodoIndex = column.todoIds.indexOf(activeTodoId);
+      const overTodoIndex = column.todoIds.indexOf(overTodoId);
 
       const newTodosOrder = arrayMove(
-        activeColumn.todoIds,
+        column.todoIds,
         activeTodoIndex,
         overTodoIndex
       );
@@ -75,8 +80,8 @@ export const useBoardStore = create<BoardState>((set) => ({
           ...state.columnsData,
           byId: {
             ...state.columnsData.byId,
-            [activeColumn.id]: {
-              ...activeColumn,
+            [column.id]: {
+              ...column,
               todoIds: newTodosOrder,
             },
           },
@@ -190,5 +195,16 @@ export const useBoardStore = create<BoardState>((set) => ({
         },
       };
     });
+  },
+  sendColumnsDataToServer: async (todo, status) => {
+    const response = await databases.updateDocument(
+      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
+      process.env.NEXT_PUBLIC_APPWRITE_TODOS_COLLECTION_ID,
+      todo.$id,
+      {
+        status,
+      }
+    );
+    console.log(response);
   },
 }));
