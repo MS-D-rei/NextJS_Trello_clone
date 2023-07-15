@@ -38,7 +38,7 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
       style={style}
       {...attributes}
       {...listeners}
-      className="p-2 rounded-2xl border border-gray-200/50 shadow-sm bg-gray-100/50"
+      className="p-2 rounded-2xl border border-gray-300 shadow-sm bg-gray-100/50"
     >
       <h2 className="flex items-center justify-between bg-white/80 font-bold rounded-2xl p-2 px-4 mb-4">
         {idToColumnText[id]}

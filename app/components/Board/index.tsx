@@ -28,8 +28,8 @@ const Board = () => {
     moveTodoInSameColumn,
     moveTodoToAnotherColumn,
     moveTodoToEmptyColumn,
+    sendColumnsDataToServer,
   } = useBoardStore();
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
   useEffect(() => {
     fetchBoard();
@@ -51,11 +51,6 @@ const Board = () => {
     // update appwrite DB
   };
 
-  const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event;
-    setActiveId(active.id);
-  };
-
   const handleDragOver = (event: DragOverEvent) => {
     console.log("DragOverEvent");
     console.log(event);
@@ -73,7 +68,7 @@ const Board = () => {
     // 1. active.id and over.id both are todo and active moves to different column.
     // 2. active.id is todo and over.id is column
     // and active moves to diff col
-    // and the column todoIds length is 0.
+    // and the column is empty (todoIds length is 0).
 
     // other cases, do nothing.
 
@@ -83,6 +78,11 @@ const Board = () => {
 
     if (isActiveColumn) return;
 
+    // now the active is todo.
+
+    const activeTodo = todosData.byId[active.id];
+    const activeTodoColumnId = columnsData.byId[activeTodo.status].id;
+
     const isOverColumn = ["todo", "in-progress", "done"].includes(
       over.id as StatusType
     );
@@ -90,18 +90,15 @@ const Board = () => {
     // case1: active and over are todos and active moves to difference column.
 
     if (!isOverColumn) {
-      const activeTodo = todosData.byId[active.id];
-      const overTodo = todosData.byId[over.id];
+      const overTodoStatus = todosData.byId[over.id].status;
 
       // if active and over are in the same column, do nothing.
 
-      const activeColumnId = columnsData.byId[activeTodo.status].id;
-      const overColumnId = columnsData.byId[overTodo.status].id;
+      const overTodoColumnId = columnsData.byId[overTodoStatus].id;
 
-      const isActiveAndOverTodoInSameColumn = activeColumnId === overColumnId;
-      if (isActiveAndOverTodoInSameColumn) {
-        return;
-      }
+      const areActiveAndOverTodoInSameColumn = activeTodoColumnId === overTodoColumnId;
+
+      if (areActiveAndOverTodoInSameColumn) return;
 
       const isBelowOverTodoCard =
         active.rect.current.translated &&
@@ -113,23 +110,22 @@ const Board = () => {
         isBelowOverTodoCard
       );
 
+      sendColumnsDataToServer(activeTodo, overTodoStatus);
+
       return;
     }
 
     // case2: active is todo and over is column and the column todoIds length is 0.
 
-    const activeTodo = todosData.byId[active.id];
-    const activeTodoStatus = activeTodo.status;
-    const activeTodoColumnId = columnsData.byId[activeTodoStatus].id;
     const overColumnId = columnsData.byId[over.id as StatusType].id;
     const areActiveAndOverColumnSame = activeTodoColumnId === overColumnId;
 
     if (areActiveAndOverColumnSame) return;
 
-    const isOverColumnTodoIdsLengthZero =
+    const isOverColumnEmpty =
       columnsData.byId[over.id as StatusType].todoIds.length === 0;
 
-    if (!isOverColumnTodoIdsLengthZero) return;
+    if (!isOverColumnEmpty) return;
 
     moveTodoToEmptyColumn(active.id as string, over.id as StatusType);
   };
@@ -149,7 +145,7 @@ const Board = () => {
     // 2. active.id and over.id both are todos and they are in same columns.
 
     const isActiveColumn = ["todo", "in-progress", "done"].includes(
-      activeId as StatusType
+      active.id as StatusType
     );
     const isOverColumn = ["todo", "in-progress", "done"].includes(
       over.id as StatusType
@@ -176,14 +172,14 @@ const Board = () => {
       activeTodoStatus === overTodoStatus;
 
     if (areBothActiveAndOverTodoInSameColumn) {
-      moveTodoInSameColumn(active.id as string, over.id as string);
+      moveTodoInSameColumn(active.id as string, over.id as string, activeTodoStatus);
       return;
     }
   };
 
   return (
     <>
-      <div className="flex justify-end space-x-1 mr-4 mb-2">
+      <div className="flex justify-center space-x-1 mr-4 mb-2">
         <button
           className="rounded-md text-gray-500 bg-white/50 p-2 mr-2"
           onClick={() => fetchBoard()}
@@ -200,7 +196,6 @@ const Board = () => {
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetection}
-        onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
