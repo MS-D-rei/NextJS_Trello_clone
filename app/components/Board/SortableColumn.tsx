@@ -5,20 +5,24 @@ import { CSS } from "@dnd-kit/utilities";
 import { Column, StatusType, TodosData } from "@/types/board-type";
 import TodoCard from "@/app/components/Board/TodoCard";
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
+import { useHeaderStore } from "@/store/headerStore";
+import { useCallback } from "react";
 
 interface SortableColumnProps {
   id: StatusType;
   column: Column;
-  todos: TodosData;
+  todosData: TodosData;
 }
 
 const SortableColumn: React.FC<SortableColumnProps> = ({
   id,
   column,
-  todos,
+  todosData,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
+
+  const { searchString } = useHeaderStore();
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -31,6 +35,17 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
     "in-progress": "In Progress",
     done: "Done",
   };
+
+  const searchedTodoIds = useCallback(() => {
+    if (!searchString) {
+      return column.todoIds;
+    }
+
+    return column.todoIds.filter((todoId) => {
+      const todo = todosData.byId[todoId];
+      return todo.title.toLowerCase().includes(searchString.toLowerCase());
+    });
+  }, [searchString, column.todoIds, todosData.byId]);
 
   return (
     <div
@@ -49,8 +64,8 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
 
       <ul className="grid gap-4 list-none">
         <SortableContext id="todos" items={column.todoIds}>
-          {column.todoIds.map((todoId) => (
-            <TodoCard key={todoId} id={todoId} todo={todos.byId[todoId]} />
+          {searchedTodoIds().map((todoId) => (
+            <TodoCard key={todoId} id={todoId} todo={todosData.byId[todoId]} />
           ))}
         </SortableContext>
         <li className="flex justify-end p-2 px-4 bg-white/50 rounded-md hover:bg-green-200">

@@ -206,7 +206,7 @@ const Board = () => {
                 key={status}
                 id={status}
                 column={columnsData.byId[status]}
-                todos={todosData}
+                todosData={todosData}
               />
             ))}
           </div>
