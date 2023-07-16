@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import { ColumnsData, StatusType, Todo, TodosData } from "@/types/board-type";
-import { arrayMove } from "@dnd-kit/sortable";
-import { getColumnAndTodoData } from "@/service/getColumnAndTodoData";
 import { databases } from "@/appwrite";
+import { arrayMove } from "@dnd-kit/sortable";
+import { ColumnsData, StatusType, Todo, TodosData } from "@/types/board-type";
+import { getColumnAndTodoData } from "@/service/getColumnAndTodoData";
 
 interface BoardState {
   columnsData: ColumnsData;
@@ -24,6 +24,8 @@ interface BoardState {
     overColumnId: StatusType
   ) => void;
   sendColumnsDataToServer: (todo: Todo, status: StatusType) => void;
+  searchString: string;
+  setSearchString: (searchString: string) => void;
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
@@ -206,5 +208,9 @@ export const useBoardStore = create<BoardState>((set) => ({
       }
     );
     console.log(response);
+  },
+  searchString: "",
+  setSearchString: (searchString) => {
+    set({ searchString });
   },
 }));
