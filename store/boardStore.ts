@@ -24,8 +24,6 @@ interface BoardState {
     overColumnId: StatusType
   ) => void;
   sendColumnsDataToServer: (todo: Todo, status: StatusType) => void;
-  searchString: string;
-  setSearchString: (searchString: string) => void;
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
@@ -208,9 +206,5 @@ export const useBoardStore = create<BoardState>((set) => ({
       }
     );
     console.log(response);
-  },
-  searchString: "",
-  setSearchString: (searchString) => {
-    set({ searchString });
   },
 }));
