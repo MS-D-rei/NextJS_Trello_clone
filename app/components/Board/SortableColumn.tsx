@@ -58,7 +58,7 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
       <h2 className="flex items-center justify-between bg-white/80 font-bold rounded-2xl p-2 px-4 mb-4">
         {idToColumnText[id]}
         <span className="text-sm text-gray-500 rounded-full bg-gray-300 font-normal px-4 py-2">
-          {column.todoIds.length}
+          {searchedTodoIds().length}
         </span>
       </h2>
 
