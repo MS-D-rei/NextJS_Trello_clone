@@ -3,8 +3,8 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Todo } from "@/types/board-type";
 import { XCircleIcon } from "@heroicons/react/24/solid";
+import { Todo } from "@/types/board-type";
 
 interface TodoCardProps {
   id: string;

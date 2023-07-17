@@ -2,7 +2,7 @@
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useDebounce } from "@/app/hooks/useDebounce";
-import { useHeaderStore } from "@/store/headerStore";
+import { useHeaderStore } from "@/store";
 
 const SearchBar = () => {
   const { setSearchString } = useHeaderStore();

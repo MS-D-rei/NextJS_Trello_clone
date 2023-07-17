@@ -1,16 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useBoardStore } from "@/store/boardStore";
+import { useEffect } from "react";
 import {
   CollisionDetection,
   DndContext,
   DragEndEvent,
   DragOverEvent,
-  DragStartEvent,
   KeyboardSensor,
   PointerSensor,
-  UniqueIdentifier,
   closestCorners,
   useSensor,
   useSensors,
@@ -18,6 +15,7 @@ import {
 import { SortableContext } from "@dnd-kit/sortable";
 import SortableColumn from "@/app/(site)/components/Board/SortableColumn";
 import { StatusType } from "@/types/board-type";
+import { useBoardStore, useModalStore } from "@/store";
 
 const Board = () => {
   const {
@@ -38,6 +36,8 @@ const Board = () => {
   console.log(columnsData);
   console.log(todosData);
 
+  const {} = useModalStore();
+
   const sensors = useSensors(
     useSensor(KeyboardSensor),
     useSensor(PointerSensor)
@@ -45,10 +45,6 @@ const Board = () => {
 
   const collisionDetection: CollisionDetection = (args) => {
     return closestCorners(args);
-  };
-
-  const handleSave = () => {
-    // update appwrite DB
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -96,7 +92,8 @@ const Board = () => {
 
       const overTodoColumnId = columnsData.byId[overTodoStatus].id;
 
-      const areActiveAndOverTodoInSameColumn = activeTodoColumnId === overTodoColumnId;
+      const areActiveAndOverTodoInSameColumn =
+        activeTodoColumnId === overTodoColumnId;
 
       if (areActiveAndOverTodoInSameColumn) return;
 
@@ -172,7 +169,11 @@ const Board = () => {
       activeTodoStatus === overTodoStatus;
 
     if (areBothActiveAndOverTodoInSameColumn) {
-      moveTodoInSameColumn(active.id as string, over.id as string, activeTodoStatus);
+      moveTodoInSameColumn(
+        active.id as string,
+        over.id as string,
+        activeTodoStatus
+      );
       return;
     }
   };
@@ -188,7 +189,7 @@ const Board = () => {
         </button>
         <button
           className="rounded-md text-white bg-sky-500 p-2 mr-2"
-          onClick={handleSave}
+          onClick={() => {}}
         >
           Save
         </button>

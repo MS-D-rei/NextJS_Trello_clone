@@ -1,12 +1,12 @@
 "use client";
 
+import { useCallback } from "react";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { PlusCircleIcon } from "@heroicons/react/24/solid";
+import { useHeaderStore } from "@/store";
 import { Column, StatusType, TodosData } from "@/types/board-type";
 import TodoCard from "@/app/(site)/components/Board/TodoCard";
-import { PlusCircleIcon } from "@heroicons/react/24/solid";
-import { useHeaderStore } from "@/store/headerStore";
-import { useCallback } from "react";
 
 interface SortableColumnProps {
   id: StatusType;
