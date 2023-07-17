@@ -16,7 +16,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import SortableColumn from "@/app/components/Board/SortableColumn";
+import SortableColumn from "@/app/(site)/components/Board/SortableColumn";
 import { StatusType } from "@/types/board-type";
 
 const Board = () => {

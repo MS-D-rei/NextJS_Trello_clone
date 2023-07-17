@@ -3,7 +3,7 @@
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Column, StatusType, TodosData } from "@/types/board-type";
-import TodoCard from "@/app/components/Board/TodoCard";
+import TodoCard from "@/app/(site)/components/Board/TodoCard";
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
 import { useHeaderStore } from "@/store/headerStore";
 import { useCallback } from "react";

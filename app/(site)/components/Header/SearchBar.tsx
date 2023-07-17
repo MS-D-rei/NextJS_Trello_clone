@@ -8,7 +8,6 @@ const SearchBar = () => {
   const { setSearchString } = useHeaderStore();
 
   const handleChange = useDebounce((event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('debounce');
     setSearchString(event.target.value);
   });
 

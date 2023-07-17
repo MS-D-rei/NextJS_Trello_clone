@@ -1,5 +1,5 @@
-import Header from "@/app/components/Header";
-import Board from "@/app//components/Board";
+import Header from "@/app/(site)/components/Header";
+import Board from "@/app/(site)/components/Board";
 
 export default function Home() {
   return (
