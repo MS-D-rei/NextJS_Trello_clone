@@ -1,10 +1,16 @@
 'use client';
 
-import { useHeaderStore } from "@/store/headerStore";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { useDebounce } from "@/app/hooks/useDebounce";
+import { useHeaderStore } from "@/store/headerStore";
 
 const SearchBar = () => {
   const { setSearchString } = useHeaderStore();
+
+  const handleChange = useDebounce((event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('debounce');
+    setSearchString(event.target.value);
+  });
 
   return (
     <form
@@ -18,7 +24,7 @@ const SearchBar = () => {
       type="text"
       placeholder="Search"
       className="flex-1 outline-none p-2"
-      onChange={(event) => setSearchString(event.target.value)}
+      onChange={handleChange}
     />
     <button type="submit" hidden>
       Search
