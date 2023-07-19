@@ -7,7 +7,11 @@ import {
   DragEndEvent,
   DragOverEvent,
   KeyboardSensor,
+  MouseSensor,
+  MouseSensorOptions,
   PointerSensor,
+  TouchSensor,
+  TouchSensorOptions,
   closestCorners,
   useSensor,
   useSensors,
@@ -15,7 +19,7 @@ import {
 import { SortableContext } from "@dnd-kit/sortable";
 import SortableColumn from "@/app/(site)/components/Board/SortableColumn";
 import { StatusType } from "@/types/board-type";
-import { useBoardStore, useModalStore } from "@/store";
+import { useBoardStore } from "@/store";
 
 const Board = () => {
   const {
@@ -36,11 +40,53 @@ const Board = () => {
   console.log(columnsData);
   console.log(todosData);
 
-  const {} = useModalStore();
+  const handleActivationOnButton = (element: HTMLElement | null) => {
+    let target = element;
+
+    if (target === null) return false;
+
+    while (target !== null) {
+      if (target.tagName.toLowerCase() === "button") {
+        return false;
+      }
+      target = target.parentElement;
+    }
+
+    return true;
+  };
+
+  class MouseSensorToHandleActivation extends MouseSensor {
+    static activators = [
+      {
+        eventName: "onMouseDown" as const,
+        handler: (
+          { nativeEvent: event }: MouseEvent,
+          { onActivation }: MouseSensorOptions
+        ): boolean => {
+          return handleActivationOnButton(event.target as HTMLElement);
+        },
+      },
+    ];
+  }
+
+  class TouchSensorToHandleActivation extends TouchSensor {
+    static activators = [
+      {
+        eventName: "onTouchStart" as const,
+        handler: (
+          { nativeEvent: event }: TouchEvent,
+          { onActivation }: TouchSensorOptions
+        ): boolean => {
+          return handleActivationOnButton(event.target as HTMLElement);
+        },
+      },
+    ];
+  }
 
   const sensors = useSensors(
+    useSensor(MouseSensorToHandleActivation),
     useSensor(KeyboardSensor),
-    useSensor(PointerSensor)
+    useSensor(TouchSensorToHandleActivation)
   );
 
   const collisionDetection: CollisionDetection = (args) => {
