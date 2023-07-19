@@ -1,5 +1,6 @@
 import Header from "@/app/(site)/components/Header";
 import Board from "@/app/(site)/components/Board";
+import Modal from "@/app/components/Modal";
 
 export default function Home() {
   return (
@@ -9,6 +10,9 @@ export default function Home() {
 
       {/* Board */}
       <Board />
+
+      {/* Modal */}
+      <Modal />
     </main>
   )
 }
