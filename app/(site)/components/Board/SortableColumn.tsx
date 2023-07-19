@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
-import { useHeaderStore } from "@/store";
+import { useHeaderStore, useModalStore } from "@/store";
 import { Column, StatusType, TodosData } from "@/types/board-type";
 import TodoCard from "@/app/(site)/components/Board/TodoCard";
 
@@ -23,6 +23,8 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
     useSortable({ id });
 
   const { searchString } = useHeaderStore();
+
+  const { openModal } = useModalStore();
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -69,7 +71,7 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
           ))}
         </SortableContext>
         <li className="flex justify-end p-2 px-4 bg-white/50 rounded-md hover:bg-green-200">
-          <button>
+          <button onClick={openModal}>
             <PlusCircleIcon className="h-6 w-6 text-green-500" />
           </button>
         </li>
