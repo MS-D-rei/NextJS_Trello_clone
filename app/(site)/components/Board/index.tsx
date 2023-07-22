@@ -9,7 +9,6 @@ import {
   KeyboardSensor,
   MouseSensor,
   MouseSensorOptions,
-  PointerSensor,
   TouchSensor,
   TouchSensorOptions,
   closestCorners,
@@ -20,6 +19,7 @@ import { SortableContext } from "@dnd-kit/sortable";
 import SortableColumn from "@/app/(site)/components/Board/SortableColumn";
 import { StatusType } from "@/types/board-type";
 import { useBoardStore } from "@/store";
+import Button from "@/app/components/Button";
 
 const Board = () => {
   const {
@@ -37,8 +37,8 @@ const Board = () => {
     fetchBoard();
   }, [fetchBoard]);
 
-  console.log(columnsData);
-  console.log(todosData);
+  // console.log(columnsData);
+  // console.log(todosData);
 
   const handleActivationOnButton = (element: HTMLElement | null) => {
     let target = element;
@@ -94,8 +94,7 @@ const Board = () => {
   };
 
   const handleDragOver = (event: DragOverEvent) => {
-    console.log("DragOverEvent");
-    console.log(event);
+    // console.log("DragOverEvent", event);
 
     const { active, over } = event;
 
@@ -174,8 +173,7 @@ const Board = () => {
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    console.log("DragEndEvent");
-    console.log(event);
+    // console.log("DragEndEvent", event);
 
     const { active, over } = event;
 
@@ -227,18 +225,12 @@ const Board = () => {
   return (
     <>
       <div className="flex justify-center space-x-1 mr-4 mb-2">
-        <button
-          className="rounded-md text-gray-500 bg-white/50 p-2 mr-2"
-          onClick={() => fetchBoard()}
-        >
+        <Button type="button" onClick={() => fetchBoard()} secondary>
           Reset
-        </button>
-        <button
-          className="rounded-md text-white bg-sky-500 p-2 mr-2"
-          onClick={() => {}}
-        >
+        </Button>
+        <Button type="button">
           Save
-        </button>
+        </Button>
       </div>
       <DndContext
         sensors={sensors}
