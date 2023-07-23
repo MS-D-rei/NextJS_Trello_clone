@@ -1,6 +1,7 @@
 import Header from "@/app/(site)/components/Header";
 import Board from "@/app/(site)/components/Board";
-import ConfirmModal from "../components/ConfirmModal";
+import ConfirmModal from "@/app/components/ConfirmModal";
+import AddTodoModal from "@/app/components/AddTodoModal";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <Board />
 
       <ConfirmModal />
+      <AddTodoModal />
     </main>
   )
 }
