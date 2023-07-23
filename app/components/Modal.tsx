@@ -6,15 +6,16 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useModalStore } from "@/store";
 
 interface ModalProps {
+  as?: React.ElementType;
   children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ children }) => {
-  const { isModalOpen, closeModal } = useModalStore();
+const Modal: React.FC<ModalProps> = ({ as = "div", children }) => {
+  const { isDeleteModalOpen, closeDeleteModal } = useModalStore();
 
   return (
-    <Transition.Root show={isModalOpen} as={Fragment}>
-      <Dialog as="div" onClose={closeModal} className="relative z-50">
+    <Transition.Root show={isDeleteModalOpen} as={Fragment}>
+      <Dialog as={as} onClose={closeDeleteModal} className="relative z-50">
         {/* gray schreen */}
         <Transition.Child
           as={Fragment}

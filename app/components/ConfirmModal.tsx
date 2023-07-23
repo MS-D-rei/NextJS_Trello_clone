@@ -7,7 +7,7 @@ import Button from "@/app/components/Button";
 
 const ConfirmModal = () => {
   return (
-    <Modal>
+    <Modal as="div">
       <div className="flex px-4 pt-5 pb-4 sm:pt-6 sm:pb-4">
         <div className="flex items-start">
           <div

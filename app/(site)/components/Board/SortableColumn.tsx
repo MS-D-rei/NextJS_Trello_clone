@@ -24,7 +24,7 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
 
   const { searchString } = useHeaderStore();
 
-  const { openModal } = useModalStore();
+  const { openAddTodoModal } = useModalStore();
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -71,7 +71,7 @@ const SortableColumn: React.FC<SortableColumnProps> = ({
           ))}
         </SortableContext>
         <li className="flex justify-end p-2 px-4 bg-white/50 rounded-md hover:bg-green-200">
-          <button onClick={openModal}>
+          <button onClick={openAddTodoModal}>
             <PlusCircleIcon className="h-6 w-6 text-green-500" />
           </button>
         </li>
