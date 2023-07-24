@@ -2,11 +2,12 @@
 
 import { useBoardStore } from "@/store";
 import { RadioGroup } from "@headlessui/react";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
 const todoStatusGroup = [
   {
     id: "todo",
-    description: "A new Task to be completed",
+    description: "New Task",
   },
   {
     id: "in-progress",
@@ -35,29 +36,34 @@ const TodoStatusRadioGroup = () => {
                   `${active
                     ? "ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300"
                     : ""
-                  } ${checked
-                    ? "bg-sky-900 bg-opacity-75 text-white"
-                    : "bg-white"
+                  } ${checked ? "bg-sky-900/75 text-white" : "bg-white"
                   } relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none`
                 }
               >
                 {({ active, checked }) => (
                   <>
-                    <div className="w-full items-center justify-between text-sm">
-                      <RadioGroup.Label
-                        as="p"
-                        className={`font-medium ${checked ? "text-white" : "text-gray-900"
-                          }`}
-                      >
-                        {status.id}
-                      </RadioGroup.Label>
-                      <RadioGroup.Description
-                        as="span"
-                        className={`inline ${checked ? "text-sky-100" : "text-gray-500"
-                          }`}
-                      >
-                        {status.description}
-                      </RadioGroup.Description>
+                    <div className="flex w-full items-center justify-between">
+                      <div className="text-sm">
+                        <RadioGroup.Label
+                          as="p"
+                          className={`font-medium ${checked ? "text-white" : "text-gray-900"
+                            }`}
+                        >
+                          {status.id}
+                        </RadioGroup.Label>
+                        <RadioGroup.Description
+                          as="span"
+                          className={`inline ${checked ? "text-sky-100" : "text-gray-500"
+                            }`}
+                        >
+                          {status.description}
+                        </RadioGroup.Description>
+                      </div>
+                      {checked && (
+                        <div className="shrink-0 p-0 rounded-full sm:mr-2">
+                          <CheckCircleIcon className="w-6 h-6 text-gray-50" />
+                        </div>
+                      )}
                     </div>
                   </>
                 )}
