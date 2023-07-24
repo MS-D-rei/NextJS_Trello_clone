@@ -2,7 +2,7 @@
 
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { Dialog } from "@headlessui/react";
-import Modal from "@/app/components/Modal";
+import Modal from "@/app/components/modals/Modal";
 import Button from "@/app/components/Button";
 
 const ConfirmModal = () => {

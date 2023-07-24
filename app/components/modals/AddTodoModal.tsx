@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 import { useModalStore } from "@/store";
 import Input from "@/app/components/Input";
-import TodoStatusRadioGroup from "./TodoStatusRadioGroup";
+import TodoStatusRadioGroup from "@/app/components/modals/TodoStatusRadioGroup";
 
 const AddTodoModal = () => {
   const { isAddTodoModalOpen, closeAddTodoModal } = useModalStore();
