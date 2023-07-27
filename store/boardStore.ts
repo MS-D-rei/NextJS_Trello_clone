@@ -24,13 +24,6 @@ interface BoardState {
     overColumnId: StatusType
   ) => void;
   sendColumnsDataToServer: (todo: Todo, status: StatusType) => void;
-
-  newTodoTitle: string;
-  setNewTodoTitle: (title: string) => void;
-  newTodoStatus: StatusType;
-  setNewTodoStatus: (status: StatusType) => void;
-  newTodoImage: string;
-  setNewTodoImage: (image: string) => void;
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
@@ -213,17 +206,5 @@ export const useBoardStore = create<BoardState>((set) => ({
       }
     );
     console.log(response);
-  },
-  newTodoTitle: "",
-  setNewTodoTitle: (title) => {
-    set({ newTodoTitle: title });
-  },
-  newTodoStatus: "todo",
-  setNewTodoStatus: (status) => {
-    set({ newTodoStatus: status });
-  },
-  newTodoImage: "",
-  setNewTodoImage: (image) => {
-    set({ newTodoImage: image });
   },
 }));
