@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useModalStore } from "@/store";
 import Input from "@/app/components/Input";
 import TodoStatusRadioGroup from "@/app/components/modals/TodoStatusRadioGroup";
+import ImageUpload from "../ImageUpload";
 
 const AddTodoModal = () => {
   const { isAddTodoModalOpen, closeAddTodoModal } = useModalStore();
@@ -67,7 +68,9 @@ const AddTodoModal = () => {
 
                   {/* radio buttons */}
                   <TodoStatusRadioGroup />
+
                   {/* Add image */}
+                  <ImageUpload />
 
                   {/* submit button */}
                 </div>
