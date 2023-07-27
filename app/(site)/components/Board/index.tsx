@@ -20,6 +20,8 @@ import SortableColumn from "@/app/(site)/components/Board/SortableColumn";
 import { StatusType } from "@/types/board-type";
 import { useBoardStore } from "@/store";
 import Button from "@/app/components/Button";
+import ConfirmModal from "@/app/components/modals/ConfirmModal";
+import AddTodoModal from "@/app/components/modals/AddTodoModal";
 
 const Board = () => {
   const {
@@ -224,6 +226,8 @@ const Board = () => {
 
   return (
     <>
+      <ConfirmModal />
+      <AddTodoModal />
       <div className="flex justify-center space-x-1 mr-4 mb-2">
         <Button type="button" onClick={() => fetchBoard()} secondary>
           Reset

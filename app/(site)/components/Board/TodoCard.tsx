@@ -5,6 +5,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { XCircleIcon } from "@heroicons/react/24/solid";
 import { Todo } from "@/types/board-type";
+import { useModalStore } from "@/store";
 
 interface TodoCardProps {
   id: string;
@@ -20,6 +21,8 @@ const TodoCard: React.FC<TodoCardProps> = ({ id, todo }) => {
     transition,
     isDragging,
   } = useSortable({ id });
+
+  const { openDeleteModal } = useModalStore();
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -38,7 +41,7 @@ const TodoCard: React.FC<TodoCardProps> = ({ id, todo }) => {
     >
       <div className="flex items-center justify-between">
         <p>{todo.title}</p>
-        <button>
+        <button onClick={openDeleteModal}>
           <XCircleIcon className="h-6 w-6 text-red-300 hover:text-red-500" />
         </button>
       </div>
