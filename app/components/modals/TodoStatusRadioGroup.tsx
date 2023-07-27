@@ -1,8 +1,8 @@
 "use client";
 
-import { useBoardStore } from "@/store";
 import { RadioGroup } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { useNewTodoStore } from "@/store";
 
 const todoStatusGroup = [
   {
@@ -20,7 +20,7 @@ const todoStatusGroup = [
 ];
 
 const TodoStatusRadioGroup = () => {
-  const { newTodoStatus, setNewTodoStatus } = useBoardStore();
+  const { newTodoStatus, setNewTodoStatus } = useNewTodoStore();
 
   return (
     <div className="w-full py-4">
