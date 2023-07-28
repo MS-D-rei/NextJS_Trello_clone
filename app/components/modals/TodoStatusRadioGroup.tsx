@@ -1,8 +1,11 @@
 "use client";
 
+import { RefObject, createRef, useRef } from "react";
+import { FieldValues, UseFormRegister } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useNewTodoStore } from "@/store";
+import { StatusType } from "@/types/board-type";
 
 const todoStatusGroup = [
   {
@@ -19,16 +22,33 @@ const todoStatusGroup = [
   },
 ];
 
-const TodoStatusRadioGroup = () => {
+interface TodoStatusRadioGroupProps {
+  register: UseFormRegister<FieldValues>;
+  disabled?: boolean;
+}
+
+const TodoStatusRadioGroup: React.FC<TodoStatusRadioGroupProps> = ({
+  register,
+  disabled,
+}) => {
+  const radioButtonRefs = useRef<RefObject<HTMLInputElement>[]>([]);
+  todoStatusGroup.forEach((_, index) => {
+    radioButtonRefs.current[index] = createRef<HTMLInputElement>();
+  });
+
   const { newTodoStatus, setNewTodoStatus } = useNewTodoStore();
+
+  const handleChange = (status: StatusType) => {
+    setNewTodoStatus(status);
+  };
 
   return (
     <div className="w-full py-4">
       <div className="w-full mx-auto max-w-md">
-        <RadioGroup value={newTodoStatus} onChange={setNewTodoStatus}>
+        <RadioGroup value={newTodoStatus} onChange={handleChange}>
           <RadioGroup.Label className="sr-only">Todo Status</RadioGroup.Label>
           <div className="space-y-2">
-            {todoStatusGroup.map((status) => (
+            {todoStatusGroup.map((status, index) => (
               <RadioGroup.Option
                 key={status.id}
                 value={status.id}
@@ -46,10 +66,18 @@ const TodoStatusRadioGroup = () => {
                       <div className="text-sm">
                         <RadioGroup.Label
                           as="p"
-                          className={`font-medium ${checked ? "text-white" : "text-gray-900"
+                          className={`relative font-medium ${checked ? "text-white" : "text-gray-900"
                             }`}
                         >
                           {status.id}
+                          <input
+                            id={status.id}
+                            type="radio"
+                            {...register("status")}
+                            ref={radioButtonRefs.current[index]}
+                            name={status.id}
+                            className="absolute w-0 opacity-0 pointer-events-none"
+                          />
                         </RadioGroup.Label>
                         <RadioGroup.Description
                           as="span"
