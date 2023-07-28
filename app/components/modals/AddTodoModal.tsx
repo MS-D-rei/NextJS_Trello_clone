@@ -2,8 +2,8 @@
 
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { useForm } from "react-hook-form";
-import { useModalStore } from "@/store";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useModalStore, useNewTodoStore } from "@/store";
 import Input from "@/app/components/Input";
 import TodoStatusRadioGroup from "@/app/components/modals/TodoStatusRadioGroup";
 import ImageUpload from "../ImageUpload";
@@ -11,11 +11,32 @@ import ImageUpload from "../ImageUpload";
 const AddTodoModal = () => {
   const { isAddTodoModalOpen, closeAddTodoModal } = useModalStore();
 
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { isLoading, errors },
+  } = useForm<FieldValues>({
+    defaultValues: {
+      title: "",
+      status: "todo",
+      image: "",
+    },
+  });
+
+  const { newTodoImage } = useNewTodoStore();
+
+  const onSubmit: SubmitHandler<FieldValues> = (data: any) => {
+    console.log(data);
+  };
 
   return (
     <Transition.Root show={isAddTodoModalOpen} as={Fragment}>
-      <Dialog as="form" onClose={closeAddTodoModal} className="relative z-50">
+      <Dialog
+        as="form"
+        onClose={closeAddTodoModal}
+        className="relative z-50"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         {/* gray schreen */}
         <Transition.Child
           as={Fragment}
@@ -64,10 +85,12 @@ const AddTodoModal = () => {
                     id="title"
                     label="Title"
                     register={register}
+                    required={true}
+                    disabled={isLoading}
                   />
 
                   {/* radio buttons */}
-                  <TodoStatusRadioGroup />
+                  <TodoStatusRadioGroup register={register} disabled={isLoading} />
 
                   {/* Add image */}
                   <ImageUpload />
