@@ -1,15 +1,18 @@
 "use client";
 
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useRef } from "react";
 import Image from "next/image";
-import { useSelectFile } from "@/app/hooks/useSelectFile";
 import Button from "@/app/components/Button";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
-const ImageUpload = () => {
-  const selectedFileRef = useRef<HTMLInputElement>(null);
+interface ImageUploadProps {
+  selectedFile: string | undefined;
+  setSelectedFile: Dispatch<SetStateAction<string | undefined>>;
+  selectFile: (event: ChangeEvent<HTMLInputElement>) => void;
+}
 
-  const { selectFile, setSelectedFile, selectedFile } = useSelectFile();
+const ImageUpload: React.FC<ImageUploadProps> = ({ selectedFile, setSelectedFile, selectFile }) => {
+  const selectedFileRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = () => {
     selectedFileRef.current?.click();
@@ -27,7 +30,7 @@ const ImageUpload = () => {
   return (
     <div>
       {selectedFile ? (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col items-center gap-1">
           <Image
             src={selectedFile}
             alt="selectedImage"

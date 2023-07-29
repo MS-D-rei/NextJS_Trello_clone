@@ -3,10 +3,12 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { useModalStore, useNewTodoStore } from "@/store";
+import { useModalStore } from "@/store";
 import Input from "@/app/components/Input";
 import TodoStatusRadioGroup from "@/app/components/modals/TodoStatusRadioGroup";
 import ImageUpload from "../ImageUpload";
+import Button from "../Button";
+import { useSelectFile } from "@/app/hooks/useSelectFile";
 
 const AddTodoModal = () => {
   const { isAddTodoModalOpen, closeAddTodoModal } = useModalStore();
@@ -23,9 +25,10 @@ const AddTodoModal = () => {
     },
   });
 
-  const { newTodoImage } = useNewTodoStore();
+  const { selectedFile, setSelectedFile, selectFile } = useSelectFile();
 
   const onSubmit: SubmitHandler<FieldValues> = (data: any) => {
+    data.image = selectedFile;
     console.log(data);
   };
 
@@ -87,15 +90,26 @@ const AddTodoModal = () => {
                     register={register}
                     required={true}
                     disabled={isLoading}
+                    errors={errors}
                   />
 
                   {/* radio buttons */}
-                  <TodoStatusRadioGroup register={register} disabled={isLoading} />
+                  <TodoStatusRadioGroup
+                    register={register}
+                    disabled={isLoading}
+                  />
 
                   {/* Add image */}
-                  <ImageUpload />
+                  <ImageUpload
+                    selectedFile={selectedFile}
+                    setSelectedFile={setSelectedFile}
+                    selectFile={selectFile}
+                  />
 
                   {/* submit button */}
+                  <Button type="submit" disabled={isLoading}>
+                    Create new task
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
