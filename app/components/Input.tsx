@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { FieldValues, UseFormRegister } from "react-hook-form";
+import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 
 interface InputProps {
   id: string;
@@ -10,6 +10,7 @@ interface InputProps {
   register: UseFormRegister<FieldValues>;
   disabled?: boolean;
   required?: boolean;
+  errors?: FieldErrors<FieldValues>;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -19,6 +20,7 @@ const Input: React.FC<InputProps> = ({
   disabled,
   register,
   required,
+  errors,
 }) => {
   return (
     <div>
@@ -32,10 +34,11 @@ const Input: React.FC<InputProps> = ({
         id={id}
         type={type}
         disabled={disabled}
-        {...register(id, { required })}
+        {...register(id, { required, minLength: 3 })}
         className={clsx(
           `w-full border rounded-md shadow-sm text-gray-900 px-3 py-2 focus:outline-blue-400`,
-          disabled && "opacity-50 cursor-default"
+          disabled && "opacity-50 cursor-default",
+          errors?.[id] && "focus:ring-rose-400"
         )}
       />
     </div>
