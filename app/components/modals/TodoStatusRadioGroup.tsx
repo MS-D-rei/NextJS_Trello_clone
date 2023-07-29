@@ -1,9 +1,8 @@
 "use client";
 
-import { RefObject, createRef, useRef } from "react";
+import { RefObject, createRef, useRef, useState } from "react";
 import { FieldValues, UseFormRegister } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
-import { useNewTodoStore } from "@/store";
 import { StatusType } from "@/types/board-type";
 import TodoStatusRadioButtonCard from "@/app/components/modals/TodoStatusRadioButtonCard";
 
@@ -36,7 +35,7 @@ const TodoStatusRadioGroup: React.FC<TodoStatusRadioGroupProps> = ({
     radioButtonRefs.current[index] = createRef<HTMLInputElement>();
   });
 
-  const { newTodoStatus, setNewTodoStatus } = useNewTodoStore();
+  const [ newTodoStatus, setNewTodoStatus ] = useState<StatusType>()
 
   const clickRef = (ref: RefObject<HTMLInputElement>) => {
     ref.current?.click();
