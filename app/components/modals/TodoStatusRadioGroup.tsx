@@ -3,9 +3,9 @@
 import { RefObject, createRef, useRef } from "react";
 import { FieldValues, UseFormRegister } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useNewTodoStore } from "@/store";
 import { StatusType } from "@/types/board-type";
+import TodoStatusRadioButtonCard from "@/app/components/modals/TodoStatusRadioButtonCard";
 
 const todoStatusGroup = [
   {
@@ -38,6 +38,10 @@ const TodoStatusRadioGroup: React.FC<TodoStatusRadioGroupProps> = ({
 
   const { newTodoStatus, setNewTodoStatus } = useNewTodoStore();
 
+  const clickRef = (ref: RefObject<HTMLInputElement>) => {
+    ref.current?.click();
+  };
+
   const handleChange = (status: StatusType) => {
     setNewTodoStatus(status);
   };
@@ -61,39 +65,14 @@ const TodoStatusRadioGroup: React.FC<TodoStatusRadioGroupProps> = ({
                 }
               >
                 {({ active, checked }) => (
-                  <>
-                    <div className="flex w-full items-center justify-between">
-                      <div className="text-sm">
-                        <RadioGroup.Label
-                          as="p"
-                          className={`relative font-medium ${checked ? "text-white" : "text-gray-900"
-                            }`}
-                        >
-                          {status.id}
-                          <input
-                            id={status.id}
-                            type="radio"
-                            {...register("status")}
-                            ref={radioButtonRefs.current[index]}
-                            name={status.id}
-                            className="absolute w-0 opacity-0 pointer-events-none"
-                          />
-                        </RadioGroup.Label>
-                        <RadioGroup.Description
-                          as="span"
-                          className={`inline ${checked ? "text-sky-100" : "text-gray-500"
-                            }`}
-                        >
-                          {status.description}
-                        </RadioGroup.Description>
-                      </div>
-                      {checked && (
-                        <div className="shrink-0 p-0 rounded-full sm:mr-2">
-                          <CheckCircleIcon className="w-6 h-6 text-gray-50" />
-                        </div>
-                      )}
-                    </div>
-                  </>
+                  <TodoStatusRadioButtonCard
+                    ref={radioButtonRefs.current[index]}
+                    status={status}
+                    register={register}
+                    active={active}
+                    checked={checked}
+                    clickRef={clickRef}
+                  />
                 )}
               </RadioGroup.Option>
             ))}
